@@ -5,6 +5,7 @@ conn = sqlite3.connect('not_telegram.db')
 cursor = conn.cursor()
 
 
+cursor.execute("DROP TABLE IF EXISTS Users")
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY,
@@ -31,10 +32,10 @@ users_data = [
 cursor.executemany("INSERT INTO Users (username, email, age, balance) VALUES (?, ?, ?, ?)", users_data)
 
 
-cursor.execute("UPDATE Users SET balance = 500 WHERE id % 2 != 0")
+cursor.execute("UPDATE Users SET balance = 500 WHERE (id - 1) % 2 = 0")
 
 
-cursor.execute("DELETE FROM Users WHERE id % 3 = 0")
+cursor.execute("DELETE FROM Users WHERE (id - 1) % 3 = 0")
 
 
 cursor.execute("SELECT username, email, age, balance FROM Users WHERE age != 60")
@@ -45,5 +46,6 @@ conn.commit()
 conn.close()
 
 
-formatted_result = [f"Имя: {username} | Почта: {email} | Возраст: {age} | Баланс: {balance}" for
-                    username, email, age, balance in result]
+for username, email, age, balance in result:
+    print(f"Имя: {username} | Почта: {email} | Возраст: {age} | Баланс: {balance}")
+
